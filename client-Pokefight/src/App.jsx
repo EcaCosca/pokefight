@@ -1,14 +1,50 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import axios from 'axios'
+import { Route, Routes, NavLink } from 'react-router-dom'
+import Home from './pages/Home'
+import SinglePokemon from './pages/SinglePokemon'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [pokemons, setPokemons] = useState([])
+
+  useEffect(() => {
+    getPokemons();
+  }, [])
+
+  
+  const getPokemons = () => {
+    axios.get("http://localhost:8888/pokemon").then((res) => {
+    console.log(res.data);
+    setPokemons(res.data);
+    })
+    .catch((err) => {
+    console.log(err);})
+  }
 
   return (
     <>
-      <div>
+      <nav>
+        <ul>
+          <li>
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/pokemon/1">First pokemon</NavLink>
+          </li>
+          <li>
+            <NavLink to="/pokemon/1/base">First Pokemon base</NavLink>
+          </li>
+        </ul>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home pokemons={pokemons}/>} />
+        <Route path="/pokemon/:id" element={<SinglePokemon/>} />
+        <Route path="/pokemon/:id/:info" element={<h1>Id and info</h1>} />
+      </Routes>
+      {/* <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -27,7 +63,7 @@ function App() {
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
-      </p>
+      </p> */}
     </>
   )
 }
